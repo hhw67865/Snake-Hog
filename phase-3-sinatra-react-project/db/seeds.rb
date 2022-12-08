@@ -16,7 +16,7 @@ puts "creating scores..."
 20.times do
     Score.create(
         user_id: User.all.sample.id,
-        score: rand(0..20)
+        score: rand(0..6)
     )
 end
 

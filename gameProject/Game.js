@@ -1,22 +1,22 @@
 import { Image, StyleSheet, Text, View, TextInput, Button, TouchableOpacity} from 'react-native';
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { GameEngine } from "react-native-game-engine";
 // import Sound from 'react-native-sound';
 import Constants from "./Constants";
 import Head from "./Head";
 import Food from "./Food";
 import Tail from "./Tail";
-import GameLoop, {score} from "./GameLoop";
+import GameLoop, {resetScore, score} from "./GameLoop";
 
 
 
 export default function Game ({navigation,route}) {
-
-
+  
+    
     const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
     const engine = useRef(null);
     const [isGameRunning, setIsGameRunning] = useState(true);
-    // const [sound, setSound] = useState([])
+    const [replay, setReplay] = useState(true)
 
 
     const randomPositions = (min, max) => {
@@ -24,6 +24,7 @@ export default function Game ({navigation,route}) {
     };
 
     const resetGame = () => {
+      document.removeEventListener("keydown", keyboard)
       engine.current.swap({
         head: {
           position: [0, 0],
@@ -54,27 +55,29 @@ export default function Game ({navigation,route}) {
       });
       setIsGameRunning(true);
     };
+    function keyboard (e) {
+      // console.log(e.key)
+      switch (e.key) {
+        case "ArrowLeft":
+          engine.current.dispatch("move-left")
+          break
+        case "ArrowRight":
+          engine.current.dispatch("move-right")
+          break
+        case "ArrowUp":
+          engine.current.dispatch("move-up")
+          break
+        case "ArrowDown":
+          engine.current.dispatch("move-down")
+          break
+      }
+    }
 
-    // const play=()=>{
-    //   let gameoverSound = new Sound("./assets/mixkit-funny-game-over-2878.wav", Sound.MAIN_BUNDLE,(error)=>{
-    //     if(error){
-    //     console.log('Error loading sound: ' + error);
-    //     return;
-    //     }else{
-    //     gameoverSound.play((success)=>{
-    //     if(success){
-    //     console.log('Sound playing')
-    //     }else{
-    //     console.log('Issue playing file');
-    //     }
-    //     })
-    //     }
-    //     });
-    //     setSound(gameoverSound)
-    //     // gameoverSound.setVolume(0.9);
-    //     // gameoverSound.release();
-    // }
-
+      useEffect(()=>{
+        document.addEventListener("keydown", keyboard)
+        
+      },[replay])
+      
     return (
       <View style={styles.canvas}>
         <GameEngine
@@ -116,16 +119,19 @@ export default function Game ({navigation,route}) {
             switch (e) {
               case "game-over":
                 alert("Game over!");
+                
                 setIsGameRunning(false);
+                
                 // play();
                 fetch (`http://localhost:9393/scores`, {
                   method: "POST",
                   headers: {"Content-Type": "application/json"},
-                  body: JSON.stringify({user_id: route.params.profile.id, score: score})
+                  body: JSON.stringify({user_id: route.params.profile.user.id, score: score})
                 })
                 .then ( r => r.json())
                 .then (()=>{
-                  navigation.navigate('Gameover', {profile: route.params.profile, score: score, resetGame: resetGame})
+                  navigation.navigate('Gameover', {profile: route.params.profile, score: score, resetGame: resetGame, setReplay: setReplay})
+                  resetScore();
                   return;
                 } )
                 
@@ -158,30 +164,33 @@ export default function Game ({navigation,route}) {
       </View>
       )} */}
         <View style={styles.controlContainer}>
-          {/* <Text>{[GameLoop[1]]}</Text> */}
         <View style={styles.controllerRow}>
           <TouchableOpacity onPress={() => engine.current.dispatch("move-up")}>
-            <View style={styles.controlBtn} />
+          <Image style={{width: 18, height: 24}} source={{uri:"https://www.shareicon.net/data/2015/08/24/90324_arrow_512x512.png"}}/>
+            {/* <View style={styles.controlBtn} /> */}
           </TouchableOpacity>
         </View>
         <View style={styles.controllerRow}>
           <TouchableOpacity
             onPress={() => engine.current.dispatch("move-left")}
           >
-            <View style={styles.controlBtn} />
+            {/* <View style={styles.controlBtn} /> */}
+            <Image style= {{width: 16, height: 12, right: 6 }} source={{uri: "http://cdn.onlinewebfonts.com/svg/img_77631.png"}}/>
           </TouchableOpacity>
           <View style={[styles.controlBtn, { backgroundColor: null }]} />
           <TouchableOpacity
             onPress={() => engine.current.dispatch("move-right")}
           >
-            <View style={styles.controlBtn} />
+            {/* <View style={styles.controlBtn} /> */}
+            <Image style= {{width: 16, height: 12, left: 6, transform:[{rotateY: '180deg'}]}} source={{uri: "http://cdn.onlinewebfonts.com/svg/img_77631.png"}}/>
           </TouchableOpacity>
         </View>
         <View style={styles.controllerRow}>
           <TouchableOpacity
             onPress={() => engine.current.dispatch("move-down")}
           >
-            <View style={styles.controlBtn} />
+            {/* <View style={styles.controlBtn} /> */}
+            <Image style={{width: 18, height: 24, transform:[{rotateX: '180deg'}]}} source={{uri:"https://www.shareicon.net/data/2015/08/24/90324_arrow_512x512.png"}}/>
           </TouchableOpacity>
         </View>
       </View>
@@ -201,7 +210,7 @@ export default function Game ({navigation,route}) {
   controlContainer: {
     zIndex: 2,
     position: "relative",
-    right:-120,
+    right:-150,
     top: -60,
   },
   controllerRow: {
@@ -209,9 +218,9 @@ export default function Game ({navigation,route}) {
     justifyContent: "center",
     alignItems: "center",
   },
-  controlBtn: {
-    backgroundColor: "#EFF5F5",
-    width: 20,
-    height: 20,
-  },
+  // controlBtn: {
+  //   backgroundColor: "#EFF5F5",
+  //   width: 20,
+  //   height: 20,
+  // },
 });

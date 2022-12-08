@@ -39,7 +39,10 @@ export default function CreateAccount({navigation}){
             <TextInput style={styles.input} value={username} placeholder='create your username...' onChange={e=>{setUserName(e.target.value)}}></TextInput>
             <TextInput style={styles.input} value={password} placeholder='enter your password...' secureTextEntry={true} onChange={e=>{setPassword(e.target.value)}}></TextInput>
             <TextInput style={styles.input} value={name} placeholder='enter your name...' onChange={e=>{setName(e.target.value)}}></TextInput>
-            <Button title= "Create" color = "#EB6440" onPress={ handleSubmit} style={{borderRadius: 15}}></Button>
+            <View style={{display:"flex", flexDirection: "row", alignContent:"center", gap: 60, marginTop: 10 }}>
+              <Text style={{fontSize: 28}} onPress={()=>{navigation.navigate('Login')}}> 🔙 </Text>
+              <Button title= "Create" color = "#EB6440" onPress={ handleSubmit} style={{borderRadius: 15}}></Button>
+            </View>
         </View>
     )
 }
@@ -65,11 +68,13 @@ const styles = StyleSheet.create({
       fontFamily:'monospace',
       fontWeight: 200,
     },
+
    text:{
       color: "#497174",
       fontSize: 30,
-      paddingBottom: 40,
+      paddingBottom: 30,
       fontFamily:'monospace',
       fontWeight: 1000,
+      textAlign:"center"
     },
   });

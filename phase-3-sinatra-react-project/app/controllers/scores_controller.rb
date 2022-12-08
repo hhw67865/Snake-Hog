@@ -13,7 +13,9 @@ class ScoresController < ApplicationController
     # end
 
     post "/scores" do
+      
       Score.create(params).to_json
+      
     end
 
     get "/scores/:user_id" do

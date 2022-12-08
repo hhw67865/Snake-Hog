@@ -1,5 +1,5 @@
 // import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Image} from 'react-native';
 import React, { useState } from "react";
 
 export default function Login({navigation}) {
@@ -11,8 +11,23 @@ export default function Login({navigation}) {
   return (
     <>
       <View style={styles.container}>
-        {/* <Text style={styles.red}>just red</Text> */}
-        <Text style={styles.white}>Login</Text>
+        <Text style={styles.white}>Snake ⚕ Hog</Text> 
+        <Image style={{width: 260, height: 100}} source={{uri: "https://media3.giphy.com/media/gKzh28guQs9u3A6e5k/giphy.gif?cid=ecf05e47ks3189cld4c6lil0ypo23d5jtx64b3j1dfv230u1&rid=giphy.gif&ct=g"}}/>
+        <View style={{display: "flex", flexDirection:"row",}}>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+          <Image style= {{width: 20, height: 20}} source={{uri:"https://media1.giphy.com/media/l3vRbzPPasY0Dz4Q0/giphy.gif?cid=ecf05e47n5090byc80xyy9gojzqbt0piajxrrp33rd2hikht&rid=giphy.gif&ct=g"}}/>
+        </View>
         <Text style={incorrect?{color:"red", display:"block"}:{color:"red", display:"none"}}>*Incorrect username or password*</Text>
         <View style={styles.underline}>
         <TextInput value={username} onChange={(e)=>{setUsername(e.target.value)}} style={styles.input} placeholder="Username" />          
@@ -23,20 +38,29 @@ export default function Login({navigation}) {
             color="#5F6F94"
             title="Login"
             onPress={() => {
-              fetch(`http://localhost:9393/users/${username.toLowerCase()}`)
-              .then(r=>r.json())
+              fetch(`http://localhost:9393/login`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({username: username.toLowerCase(), password: password})
+              })
+              .then(r=>r.json())             
               .then(profile=>{
                 if (profile) {
-                        if (profile.password === password) {
-                                              
+                        if (profile.user.password === password) {
+                            setPassword("")
+                            setUsername("")
                             navigation.navigate('Game', {profile:profile})
                         }
                         else {
+                            setPassword("")
+                            setUsername("")
                             setIncorrect(true);
                             setTimeout(()=>setIncorrect(false),3000)
                         }
                     }
                     else {
+                        setPassword("")
+                        setUsername("")
                         setIncorrect(true);
                         setTimeout(()=>setIncorrect(false),3000)
                     }
@@ -73,9 +97,10 @@ export default function Login({navigation}) {
       white:{
         color: "white",
         fontSize: 50,
-        paddingBottom: 30,
+        paddingBottom: 10,
+        paddingTop: 10,
         fontFamily:'monospace',
-        fontWeight:1000,
+        fontWeight:900,
       },
       // underline:{
       //     borderBottomColor: "#FFE5B4",

@@ -3,10 +3,16 @@ let score = 0;
 const randomPositions = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+  function resetScore () {
+    score = 0;
+  }
+
   export default function (entities, { events, dispatch }) {
     const head = entities.head;
     const food = entities.food;
     const tail = entities.tail;
+    
   if (events.length) {
     events.forEach((e) => {
       switch (e) {
@@ -58,6 +64,7 @@ const randomPositions = (min, max) => {
           head.position[1] === el[1] 
         )
           dispatch("game-over");
+          
       });
       if (
         head.position[0] == food.position[0] &&
@@ -82,4 +89,4 @@ const randomPositions = (min, max) => {
   return entities;
 }
 
-export {score}
+export {score, resetScore}
