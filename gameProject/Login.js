@@ -2,29 +2,60 @@
 import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
 import React, { useState } from "react";
 
-
-
 export default function Login({navigation}) {
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [incorrect, setIncorrect] = useState(false)
+  
+  
   return (
     <>
-        <View style={styles.container}>
+      <View style={styles.container}>
         {/* <Text style={styles.red}>just red</Text> */}
         <Text style={styles.white}>Login</Text>
-        <TextInput style={styles.input} placeholder="Username" />          
-        <TextInput secureTextEntry={true} style={styles.input} placeholder="Password" onChange={null}/>
-        <Button 
-            color="#5158BB"
-            title="Login"
-            onPress={() => navigation.navigate('Game')}
-            />
+        <Text style={incorrect?{color:"red", display:"block"}:{color:"red", display:"none"}}>*Incorrect username or password*</Text>
+        <View style={styles.underline}>
+        <TextInput value={username} onChange={(e)=>{setUsername(e.target.value)}} style={styles.input} placeholder="Username" />          
+        <TextInput value={password} onChange={(e)=>{setPassword(e.target.value)}} secureTextEntry={true} style={styles.input} placeholder="Password"/>
         </View>
+        <Button 
+          style={{fontFamily: "monospace", fontSize: 15}}
+            color="#5F6F94"
+            title="Login"
+            onPress={() => {
+              fetch(`http://localhost:9393/users/${username.toLowerCase()}`)
+              .then(r=>r.json())
+              .then(profile=>{
+                if (profile) {
+                        if (profile.password === password) {
+                                              
+                            navigation.navigate('Game', {profile:profile})
+                        }
+                        else {
+                            setIncorrect(true);
+                            setTimeout(()=>setIncorrect(false),3000)
+                        }
+                    }
+                    else {
+                        setIncorrect(true);
+                        setTimeout(()=>setIncorrect(false),3000)
+                    }
+              })
+
+              
+              
+            }}
+            />
+
+            <Text onPress={()=>navigation.navigate('CreateAccount')} style={{paddingTop: 15, fontFamily:'monospace',}}> Have no account? Create one </Text>
+      </View>
     </>
   )
   }
   const styles = StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: '#043565',
+        backgroundColor: '#97D2EC',
         alignItems: 'center',
         justifyContent: 'center',
         height: 100,
@@ -32,17 +63,26 @@ export default function Login({navigation}) {
         borderWidth: 1,
       },
       input: {
-        backgroundColor: '#fff',
+        backgroundColor: '#FEF5AC',
         height: 40,
         margin: 12,
         borderRadius: 10,
         textAlign: 'center',
+        fontFamily:'monospace',
       },
       white:{
         color: "white",
-        fontSize: 30,
-        paddingBottom: 50
+        fontSize: 50,
+        paddingBottom: 30,
+        fontFamily:'monospace',
+        fontWeight:1000,
       },
+      // underline:{
+      //     borderBottomColor: "#FFE5B4",
+      //     borderBottomWidth: 1,
+      //     borderStyle: "dotted",
+      //     // borderWidth:10,
+      // }
     });
 
 

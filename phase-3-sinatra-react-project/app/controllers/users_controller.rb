@@ -5,12 +5,20 @@ class UsersController < ApplicationController
       User.all.to_json
     end
 
+    get "/users/:id/highestscores" do
+      User.find(params[:id]).scores.order(score: :desc).to_json
+    end
+
     # get "/users/:id" do
     #   User.find(params[:id]).to_json
     # end
 
     post "/users" do
-      User.create(params).to_json
+      if User.find_by(username: params[:username])
+        nil.to_json
+      else
+        User.create(params).to_json
+      end
     end
 
     patch "/users/:id" do
@@ -19,6 +27,7 @@ class UsersController < ApplicationController
     end
 
     delete "/users/:id" do
+      User.find(params[:id]).scores.destroy_all
       User.find(params[:id]).destroy
     end
 

@@ -5,6 +5,9 @@ class ScoresController < ApplicationController
       Score.all.to_json
     end
 
+    get "/scores/highestscores" do
+      Score.order(score: :desc).map{ |score| {name: score.user.name, score: score.score}}.to_json
+    end
     # get "/scores/:id" do
     #   Score.find(params[:id]).to_json
     # end
@@ -16,5 +19,7 @@ class ScoresController < ApplicationController
     get "/scores/:user_id" do
       Score.find_by(user_id: params[:user_id]).to_json
     end
+
+
 
   end
